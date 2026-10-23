@@ -290,3 +290,5 @@ $RECYCLE.BIN/
 # Added by cargo
 
 /target
+
+.idea

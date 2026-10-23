@@ -4,5 +4,6 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-num-bigint = "0.5.1"
+num-bigint = { version = "0.5.1", features = ["rand_0_10"] }
+rand = "0.10"
 secp256k1 = "0.33.1"
