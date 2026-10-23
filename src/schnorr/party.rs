@@ -46,7 +46,7 @@ impl Party {
         let pk_share = self.convert(self.private_key_share.clone());
         self.outgoing.send(pk_share.clone()).unwrap();
         let pk_share_incoming = self.incoming.recv().unwrap();
-        let pk = (pk_share + pk_share_incoming) % &self.params.p;
+        let pk = (pk_share * pk_share_incoming) % &self.params.p;
 
         // Compute the signature
         // Step 1: generate k
