@@ -4,4 +4,5 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+num-bigint = "0.5.1"
 secp256k1 = "0.33.1"
