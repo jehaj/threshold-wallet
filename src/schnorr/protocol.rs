@@ -29,7 +29,7 @@ fn sha256_hash(a: BigUint, b: BigUint) -> BigUint {
     BigUint::from_bytes_be(&hasher.finalize())
 }
 
-pub fn sign(m : BigUint) -> SchnorrSignature {
+pub fn sign(m : BigUint) -> (SchnorrSignature, BigUint) {
     // Toy Schnorr group: q = 17 divides p - 1 = 102, and g = 2^6 mod 103 has order q.
     let p = ProtocolParams::new(
         BigUint::from(103u32),
@@ -49,12 +49,14 @@ pub fn sign(m : BigUint) -> SchnorrSignature {
     let (m1, m2) = (m.clone(), m.clone());
     let h1 = thread::spawn(move || p1.run(m1));
     let h2 = thread::spawn(move || p2.run(m2));
-    let sig1 = h1.join().unwrap();
-    let sig2 = h2.join().unwrap();
+    let (sig1, pk1) = h1.join().unwrap();
+    let (sig2, pk2) = h2.join().unwrap();
 
+    // Check they use the same key
+    assert_eq!(pk1, pk2);
     // check sigs are the same
     assert_eq!(sig1.0, sig2.0);
     assert_eq!(sig1.1, sig2.1);
 
-    sig1
+    (sig1, pk1)
 }

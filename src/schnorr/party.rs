@@ -41,7 +41,14 @@ impl Party {
         rand::rng().random_biguint_below(&self.params.q)
     }
 
-    pub fn run(&self, m: BigUint) -> SchnorrSignature {
+    pub fn run(&self, m: BigUint) -> (SchnorrSignature, BigUint) {
+        // Compute the public key
+        let pk_share = self.convert(self.private_key_share.clone());
+        self.outgoing.send(pk_share.clone()).unwrap();
+        let pk_share_incoming = self.incoming.recv().unwrap();
+        let pk = (pk_share + pk_share_incoming) % &self.params.p;
+
+        // Compute the signature
         // Step 1: generate k
         let box_k = self.rand();
         // Step 2: convert k
@@ -60,6 +67,6 @@ impl Party {
         let incoming_z = self.incoming.recv().unwrap();
         let z =  (z_local + incoming_z) % &self.params.q;
         // Ship the signature
-        (e, z)
+        ((e, z), pk)
     }
 }
