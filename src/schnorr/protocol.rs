@@ -22,22 +22,14 @@ impl ProtocolParams {
     }
 }
 
-fn sha256_hash(a: BigUint, b: BigUint) -> BigUint {
+pub fn sha256_hash(a: BigUint, b: BigUint) -> BigUint {
     let mut hasher = Sha256::new();
     hasher.update(a.to_bytes_be());
     hasher.update(b.to_bytes_be());
     BigUint::from_bytes_be(&hasher.finalize())
 }
 
-pub fn sign(m : BigUint) -> (SchnorrSignature, BigUint) {
-    // Toy Schnorr group: q = 17 divides p - 1 = 102, and g = 2^6 mod 103 has order q.
-    let p = ProtocolParams::new(
-        BigUint::from(103u32),
-        BigUint::from(17u32),
-        BigUint::from(64u32),
-        sha256_hash,
-    );
-    
+pub fn sign(p: ProtocolParams, m : BigUint) -> (SchnorrSignature, BigUint) {    
     // Cross-wire: what p1 sends, p2 receives, and vice versa.
     let (from_p2, to_p1) = mpsc::channel();
     let (from_p1, to_p2) = mpsc::channel();
