@@ -7,3 +7,4 @@ edition = "2024"
 num-bigint = { version = "0.5.1", features = ["rand_0_10"] }
 rand = "0.10"
 secp256k1 = "0.33.1"
+sha2 = "0.11.1"
