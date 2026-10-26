@@ -5,7 +5,7 @@ use num_bigint::BigUint;
 use sha2::{Digest, Sha256};
 use crate::simple_schnorr::party::Party;
 
-pub type SchnorrSignature = (BigUint, BigUint);
+pub type SimpleSchnorrSignature = (BigUint, BigUint);
 
 /// Public parameters fixed when the protocol is initialized.
 #[derive(Clone)]
@@ -29,7 +29,7 @@ pub fn sha256_hash(a: BigUint, b: BigUint) -> BigUint {
     BigUint::from_bytes_be(&hasher.finalize())
 }
 
-pub fn sign(p: ProtocolParams, m : BigUint) -> (SchnorrSignature, BigUint) {    
+pub fn sign(p: ProtocolParams, m : BigUint) -> (SimpleSchnorrSignature, BigUint) {    
     // Cross-wire: what p1 sends, p2 receives, and vice versa.
     let (from_p2, to_p1) = mpsc::channel();
     let (from_p1, to_p2) = mpsc::channel();

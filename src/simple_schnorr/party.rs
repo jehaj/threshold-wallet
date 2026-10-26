@@ -1,7 +1,7 @@
 use std::sync::mpsc;
 use num_bigint::{BigRng010, BigUint};
 
-use super::protocol::{ProtocolParams, SchnorrSignature};
+use super::protocol::{ProtocolParams, SimpleSchnorrSignature};
 
 pub struct Party {
     params: ProtocolParams,
@@ -41,7 +41,7 @@ impl Party {
         rand::rng().random_biguint_below(&self.params.q)
     }
 
-    pub fn run(&self, m: BigUint) -> (SchnorrSignature, BigUint) {
+    pub fn run(&self, m: BigUint) -> (SimpleSchnorrSignature, BigUint) {
         // Compute the public key
         let pk_share = self.convert(self.private_key_share.clone());
         self.outgoing.send(pk_share.clone()).unwrap();
