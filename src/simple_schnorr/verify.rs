@@ -1,5 +1,5 @@
 use num_bigint::BigUint;
-use crate::schnorr::protocol::{SchnorrSignature, ProtocolParams};
+use crate::simple_schnorr::protocol::{SchnorrSignature, ProtocolParams};
 
 pub fn verify(pk: BigUint, params: ProtocolParams, sig: SchnorrSignature, m: BigUint) -> bool {
     let alpha = params.g;

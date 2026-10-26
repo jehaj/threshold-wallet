@@ -3,7 +3,7 @@ use std::thread;
 
 use num_bigint::BigUint;
 use sha2::{Digest, Sha256};
-use crate::schnorr::party::Party;
+use crate::simple_schnorr::party::Party;
 
 pub type SchnorrSignature = (BigUint, BigUint);
 

@@ -22,9 +22,9 @@ The goal is signatures that libsecp256k1's standard verifier accepts.
 
 ## Layout
 
-- `src/schnorr/protocol.rs`: public parameters, the hash, and `sign`, which
+- `src/simple_schnorr`: public parameters, the hash, and `sign`, which
   sets up the parties and runs them on separate threads.
-- `src/schnorr/party.rs`: one party's state and its local computations.
+- `src/simple_schnorr`: one party's state and its local computations.
 
 ## Run
 
