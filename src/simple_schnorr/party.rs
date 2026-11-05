@@ -30,7 +30,7 @@ impl Party {
         (self.params.h)(a, b) % &self.params.q
     }
 
-    fn eval_add(&self, a: BigUint, b: BigUint) -> BigUint {
+    fn eval_add(&self, a: &BigUint, b: &BigUint) -> BigUint {
         (a + b) % &self.params.q
     }
 
@@ -62,12 +62,12 @@ impl Party {
         let group_box_k = self.convert(&box_k);
         // Step 3: open group sharing
         let group_box_k_incoming = self.send_and_receive(&group_box_k);
-        let k =  group_box_k * group_box_k_incoming % &self.params.p;
+        let r_point =  group_box_k * group_box_k_incoming % &self.params.p;
         // Step 4: Compute the hash function
-        let e = self.compute_hash(k, m);
+        let e = self.compute_hash(r_point, m);
         // Step 5: Compute z
         let z_prime = self.eval_mul_by_constant(&e, &self.private_key_share);
-        let z_local = self.eval_add(box_k, z_prime);
+        let z_local = self.eval_add(&box_k, &z_prime);
         // Step 6: Open z
         let incoming_z = self.send_and_receive(&z_local);
         let z =  (z_local + incoming_z) % &self.params.q;
