@@ -68,11 +68,11 @@ impl Party {
         let box_k = self.rand();
         // Step 2: convert k
         // Step 3: open group sharing
-        let r_point =  self.open_group(&self.convert(&box_k));
+        let r =  self.open_group(&self.convert(&box_k));
         // Step 4: Compute the hash function
-        let e = self.compute_hash(r_point, m);
+        let e = self.compute_hash(r, m);
         // Step 5: Compute z
-        let z_prime = self.eval_mul_by_constant(&e, &self.private_key_share);
+        let z_prime = self.eval_mul_by_constant(&e, sk_local);
         let z_local = self.eval_add(&box_k, &z_prime);
         // Step 6: Open z
         let z =  self.open_scalar(&z_local);
