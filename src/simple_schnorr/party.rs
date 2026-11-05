@@ -46,31 +46,36 @@ impl Party {
         self.outgoing.send(to_send.clone()).unwrap();
         self.incoming.recv().unwrap()
     }
+    
+    fn open_group(&self, share: &BigUint) -> BigUint {
+        let inc_share = self.send_and_receive(share);
+        (share * inc_share) % &self.params.p
+    }
+
+    fn open_scalar(&self, share: &BigUint) -> BigUint {
+        let inc_share = self.send_and_receive(share);
+        (share + inc_share) % &self.params.q
+    }
 
     pub fn run(&self, m: BigUint) -> (SimpleSchnorrSignature, BigUint) {
         // Compute the public key
         let sk_local = &self.private_key_share;
-        let pk_share = self.convert(sk_local);
-        let pk_share_incoming = self.send_and_receive(&pk_share);
 
-        let pk = (pk_share * pk_share_incoming) % &self.params.p;
+        let pk = self.open_group(&self.convert(sk_local));
 
         // Compute the signature
         // Step 1: generate k
         let box_k = self.rand();
         // Step 2: convert k
-        let group_box_k = self.convert(&box_k);
         // Step 3: open group sharing
-        let group_box_k_incoming = self.send_and_receive(&group_box_k);
-        let r_point =  group_box_k * group_box_k_incoming % &self.params.p;
+        let r_point =  self.open_group(&self.convert(&box_k));
         // Step 4: Compute the hash function
         let e = self.compute_hash(r_point, m);
         // Step 5: Compute z
         let z_prime = self.eval_mul_by_constant(&e, &self.private_key_share);
         let z_local = self.eval_add(&box_k, &z_prime);
         // Step 6: Open z
-        let incoming_z = self.send_and_receive(&z_local);
-        let z =  (z_local + incoming_z) % &self.params.q;
+        let z =  self.open_scalar(&z_local);
         // Ship the signature
         ((e, z), pk)
     }
