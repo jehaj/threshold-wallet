@@ -17,7 +17,9 @@ pub enum Msg {
 /// Public parameters fixed when the protocol is initialized.
 #[derive(Clone)]
 pub struct ProtocolParams {
+    #[allow(dead_code)]
     pub p: BigUint,
+    #[allow(dead_code)]
     pub n: BigUint,
     pub h: fn(&[u8]) -> [u8; 32],
 }

@@ -3,7 +3,6 @@ use std::thread;
 
 use k256::{ProjectivePoint, Scalar};
 use k256::elliptic_curve::PrimeField;
-use num_bigint::BigUint;
 use secp256k1::PublicKey;
 use secp256k1::ecdsa::Signature;
 use sha2::{Digest, Sha256};
@@ -16,7 +15,6 @@ pub enum Msg {
     DShare(Scalar),
     EShare(Scalar),
     RShare(ProjectivePoint),
-    NonceShare(ProjectivePoint),
     Z(Scalar),
 }
 
