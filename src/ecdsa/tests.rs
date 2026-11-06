@@ -1,7 +1,5 @@
-use num_bigint::BigUint;
 use secp256k1::Message;
 use crate::ecdsa::protocol::{sign, challenge_hash};
-use crate::simple_schnorr::protocol::sha256_hash;
 
 #[test]
 fn sign_then_verify() {
