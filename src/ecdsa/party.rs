@@ -1,6 +1,6 @@
 use crate::ecdsa::protocol::Msg;
 use k256::elliptic_curve::PrimeField;
-use k256::elliptic_curve::sec1::{ToEncodedPoint, ToSec1Point};
+use k256::elliptic_curve::sec1::ToSec1Point;
 use k256::{ProjectivePoint, Scalar};
 use secp256k1::ecdsa::Signature;
 use secp256k1::{Message, PublicKey};
@@ -117,7 +117,7 @@ impl Party {
 
         sig.normalize_s();
 
-        let pk_encoded = pk.to_affine().to_encoded_point(true); // compressed SEC1 (33 bytes)
+        let pk_encoded = pk.to_affine().to_sec1_point(true); // compressed SEC1 (33 bytes)
         let pk_secp = secp256k1::PublicKey::from_slice(pk_encoded.as_bytes()).expect("invalid public key");
 
         let msg = Message::from_digest(self.compute_hash(m).to_bytes().into());
