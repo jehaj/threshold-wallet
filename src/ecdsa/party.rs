@@ -1,6 +1,6 @@
 use crate::ecdsa::protocol::Msg;
 use k256::elliptic_curve::PrimeField;
-use k256::elliptic_curve::sec1::ToEncodedPoint;
+use k256::elliptic_curve::sec1::ToSec1Point;
 use k256::{ProjectivePoint, Scalar};
 use secp256k1::ecdsa::Signature;
 use secp256k1::{Message, PublicKey};
@@ -44,11 +44,6 @@ impl Party {
     fn compute_hash(&self, x: &[u8]) -> Scalar {
         Option::from(Scalar::from_repr((self.h)(x).into()))
             .expect("challenge hash >= n (prob ~2^-128)")
-    }
-
-    fn rand(&self) -> Scalar {
-        let secret_bytes: [u8; 32] = rand::random();
-        Option::from(Scalar::from_repr(secret_bytes.into())).expect("Invalid secret key share")
     }
 
     fn open<F>(&self, my_share: Scalar, wrap: F) -> Scalar
@@ -105,9 +100,10 @@ impl Party {
             Msg::RShare(r) => r,
             _ => panic!("expected PkShare"),
         };
+        #[allow(non_snake_case)]
         let R = k_group_box + k_group_box_incoming;
         let r_affine = R.to_affine();
-        let r_encoded = r_affine.to_encoded_point(false);
+        let r_encoded = r_affine.to_sec1_point(false);
         let rx_bytes = *r_encoded.x().unwrap();
         let rx = Option::<Scalar>::from(Scalar::from_repr(rx_bytes)).expect("rx < n");
         let s_share = self.compute_hash(m) * k_inv + rx * sk_prime;
@@ -121,7 +117,7 @@ impl Party {
 
         sig.normalize_s();
 
-        let pk_encoded = pk.to_affine().to_encoded_point(true); // compressed SEC1 (33 bytes)
+        let pk_encoded = pk.to_affine().to_sec1_point(true); // compressed SEC1 (33 bytes)
         let pk_secp = secp256k1::PublicKey::from_slice(pk_encoded.as_bytes()).expect("invalid public key");
 
         let msg = Message::from_digest(self.compute_hash(m).to_bytes().into());
