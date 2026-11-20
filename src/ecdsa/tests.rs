@@ -70,6 +70,10 @@ fn sign_then_verify_corrupted_r() {
     let (sig, pk) = sign(m);
 
     let mut bytes = sig.serialize_compact();
+    // In https://docs.rs/secp256k1/0.33.1/secp256k1/ecdsa/struct.Signature.html
+    // they note the signature is (r, s), which is what this tests uses.
+    // We however, in our paper, note that the signature is (c_x, s).
+    // So this would be akin to changing the last byte in c_x.
     bytes[31] ^= 1_u8;
     let sig = Signature::from_compact(&bytes).expect("Re-creating signature failed");
     let hash = challenge_hash(m.as_ref());
