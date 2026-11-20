@@ -76,6 +76,7 @@ impl Party {
         let z_local = self.eval_add(&box_k, &z_prime);
         // Step 6: Open z
         let z =  self.open_scalar(&z_local);
+        // TODO: verify the signature on the message, to not complete with malformed shares?
         // Ship the signature
         ((e, z), pk)
     }
