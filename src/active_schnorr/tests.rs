@@ -48,7 +48,7 @@ fn mismatched_messages_between_parties() {
     let (k_share_a, k_share_b) = td.rand();
 
     let (m1, m2) = (BigUint::from(42u32), BigUint::from(43u32));
-    let ((sig1, pk1), (sig2, pk2)) = thread::scope(|s| {
+    let ((_sig1, _pk1), (_sig2, _pk2)) = thread::scope(|s| {
         let (m1_for_p1, m2_for_p2) = (m1.clone(), m2.clone());
         let h1 = s.spawn(move || p1.run(m1_for_p1, k_share_a, x_share_a));
         let h2 = s.spawn(move || p2.run(m2_for_p2, k_share_b, x_share_b));

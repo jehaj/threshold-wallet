@@ -11,6 +11,12 @@ pub struct Key {
     pub beta: BigUint
 }
 
+impl Key {
+    pub fn new(alpha: BigUint, beta: BigUint) -> Self {
+        Self { alpha, beta }
+    }
+}
+
 #[derive(Clone)]
 pub struct Share {
     pub key: Key,
@@ -38,23 +44,29 @@ impl TrustedDealer {
     }
 
     pub fn rand(&self) -> (Share,Share) {
-        let r_a = rand::rng().random_biguint_below(&self.params.q);
-        let r_b = rand::rng().random_biguint_below(&self.params.q);
+        let q = &self.params.q;
 
-        let beta_a = rand::rng().random_biguint_below(&self.params.p);
-        let beta_b = rand::rng().random_biguint_below(&self.params.p);
+        let r_a = rand_param(q);
+        let r_b = rand_param(q);
+
+        let beta_a = rand_param(q);
+        let beta_b = rand_param(q);
 
         let t_a = tag(&self.alpha, &beta_b, &r_a,&self.params.q);
         let t_b = tag(&self.alpha, &beta_a, &r_b,&self.params.q);
 
-        let key_a = Key{alpha: self.alpha.clone(),beta: beta_a.clone()};
-        let key_b = Key{alpha: self.alpha.clone(),beta: beta_b.clone()};
+        let key_a = Key::new(self.alpha.clone(), beta_a.clone());
+        let key_b = Key::new(self.alpha.clone(), beta_b.clone());
         let share_a = Share::new(key_a, t_a, r_a);
         let share_b = Share::new(key_b, t_b, r_b);
 
         (share_a, share_b)
     }
 
+}
+
+fn rand_param(param: &BigUint) -> BigUint {
+    rand::rng().random_biguint_below(param)
 }
 
 fn tag(alpha: &BigUint, beta: &BigUint, x: &BigUint, q: &BigUint) -> BigUint {

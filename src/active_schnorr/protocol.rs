@@ -18,12 +18,14 @@ pub struct ProtocolParams {
     pub h: fn(BigUint, BigUint) -> BigUint,
 }
 
+#[allow(unused)]
 impl ProtocolParams {
     pub fn new(alpha: BigUint, p: BigUint, q: BigUint, g: BigUint, h: fn(BigUint, BigUint) -> BigUint) -> Self {
         Self { alpha, p, q, g, h}
     }
 }
 
+#[allow(unused)]
 pub fn sha256_hash(a: BigUint, b: BigUint) -> BigUint {
     let mut hasher = Sha256::new();
     hasher.update(a.to_bytes_be());
@@ -31,6 +33,7 @@ pub fn sha256_hash(a: BigUint, b: BigUint) -> BigUint {
     BigUint::from_bytes_be(&hasher.finalize())
 }
 
+#[allow(unused)]
 pub fn sign(p: ProtocolParams, m : BigUint) -> (ActiveSchnorrSignature, BigUint) {    
     // Cross-wire: what p1 sends, p2 receives, and vice versa.
     let (from_p2, to_p1) = mpsc::channel();
