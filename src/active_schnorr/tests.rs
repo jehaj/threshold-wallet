@@ -11,9 +11,7 @@ use super::verify::verify;
 #[test]
 fn sign_then_verify() {
     // Given a Toy Schnorr group: q = 17 divides p - 1 = 102, and g = 2^6 mod 103 has order q.
-    // MAC key alpha is any scalar in [0, q).
     let p = ProtocolParams::new(
-        BigUint::from(5u32),
         BigUint::from(103u32),
         BigUint::from(17u32),
         BigUint::from(64u32),
@@ -31,7 +29,6 @@ fn sign_then_verify() {
 fn mismatched_messages_between_parties() {
     // q = 4294962299 divides p - 1 = 8589924598, and g = 4 has order q mod p.
     let p = ProtocolParams::new(
-        BigUint::from(123456789u32),
         BigUint::from(8589924599u64),
         BigUint::from(4294962299u32),
         BigUint::from(4u32),
@@ -43,7 +40,7 @@ fn mismatched_messages_between_parties() {
     let p1 = Party::new(p.clone(), to_p1, from_p1);
     let p2 = Party::new(p.clone(), to_p2, from_p2);
 
-    let td = TrustedDealer::new(p.clone(), p.alpha.clone());
+    let td = TrustedDealer::new(p.clone());
     let (x_share_a, x_share_b) = td.rand();
     let (k_share_a, k_share_b) = td.rand();
 
@@ -55,9 +52,8 @@ fn mismatched_messages_between_parties() {
         (h1.join().unwrap(), h2.join().unwrap())
     });
 
-    // above does not panic, since they never verify the signature
-    // but the other protocols we've implemented do
-    // TODO: should behavior be the same?
+    // Panics above: the parties hash different messages, so their shares of z
+    // no longer match the tags and the MAC check in open_scalar aborts.
 
     /*
     assert_eq!(pk1, pk2);

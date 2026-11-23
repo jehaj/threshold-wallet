@@ -82,7 +82,7 @@ impl Party {
         let p = &self.params.p;
 
         // verify 
-        let res = key.beta * (inc_share.modpow(&self.params.alpha,p)).clone() % p;
+        let res = key.beta * (inc_share.modpow(&key.alpha,p)).clone() % p;
 
         assert_eq!(res,inc_tag.clone(), "Tag verification failed in open_group: expected {}, got {}",inc_tag,res);
 
@@ -95,7 +95,7 @@ impl Party {
         let q = &self.params.q;
 
         // verify 
-        let res = (&self.params.alpha * &inc_share + key.beta )% q;
+        let res = (&key.alpha * &inc_share + key.beta )% q;
         assert_eq!(res,inc_tag, "Tag verification failed in open_scalar: expected {inc_tag}, got {res}");
 
         (share + inc_share) % q

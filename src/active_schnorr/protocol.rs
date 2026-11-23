@@ -11,7 +11,6 @@ pub type ActiveSchnorrSignature = (BigUint, BigUint);
 /// Public parameters fixed when the protocol is initialized.
 #[derive(Clone)]
 pub struct ProtocolParams {
-    pub alpha: BigUint,
     pub p: BigUint,
     pub q: BigUint,
     pub g: BigUint,
@@ -20,8 +19,8 @@ pub struct ProtocolParams {
 
 #[allow(unused)]
 impl ProtocolParams {
-    pub fn new(alpha: BigUint, p: BigUint, q: BigUint, g: BigUint, h: fn(BigUint, BigUint) -> BigUint) -> Self {
-        Self { alpha, p, q, g, h}
+    pub fn new(p: BigUint, q: BigUint, g: BigUint, h: fn(BigUint, BigUint) -> BigUint) -> Self {
+        Self { p, q, g, h}
     }
 }
 
@@ -41,7 +40,7 @@ pub fn sign(p: ProtocolParams, m : BigUint) -> (ActiveSchnorrSignature, BigUint)
     let p1 = Party::new(p.clone(), to_p1, from_p1);
     let p2 = Party::new(p.clone(), to_p2, from_p2);
 
-    let td = TrustedDealer::new(p.clone(), p.alpha);
+    let td = TrustedDealer::new(p.clone());
     let (x_share_a,x_share_b) = td.rand();
     let (k_share_a,k_share_b) = td.rand();
 
