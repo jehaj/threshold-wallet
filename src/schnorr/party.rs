@@ -62,7 +62,7 @@ impl Party {
         // Step 2: convert k
         let group_box_k_prime = self.convert(&box_k_prime);
         // TODO: Step 3: perform zero check
-        self.outgoing.send(Msg::NonceShare(group_box_k_prime.clone())).unwrap();
+        self.outgoing.send(Msg::NonceShare(group_box_k_prime)).unwrap();
         let nonce_share_recv = self.incoming.recv().unwrap();
         let group_box_k_incoming = match nonce_share_recv {
             Msg::NonceShare(p) => p,
@@ -87,7 +87,7 @@ impl Party {
         let z_local = z_prime.add_tweak(&Scalar::from(k)).expect("k + d·e is zero");
 
         // Step 6: Open z
-        self.outgoing.send(Msg::Z(z_local.clone())).unwrap();
+        self.outgoing.send(Msg::Z(z_local)).unwrap();
         let msg_share_recv = self.incoming.recv().unwrap();
         let incoming_z = match msg_share_recv {
             Msg::Z(p) => p,
