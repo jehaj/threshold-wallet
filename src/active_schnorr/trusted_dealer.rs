@@ -1,10 +1,6 @@
 use num_bigint::{BigRng010, BigUint};
 use super::protocol::{ProtocolParams};
 
-pub struct TrustedDealer {
-    params: ProtocolParams,
-    alpha: BigUint
-}
 #[derive(Clone)]
 pub struct Key {
     pub alpha: BigUint,
@@ -34,13 +30,19 @@ impl Share {
     }
 }
 
+pub struct TrustedDealer {
+    pub params: ProtocolParams,
+    alpha_a: BigUint,
+    alpha_b: BigUint
+}
 
 impl TrustedDealer {
     pub fn new(
         params: ProtocolParams,
-        alpha: BigUint
     ) -> Self {
-        Self { params, alpha}
+        let alpha_a = rand_param(&params.q);
+        let alpha_b = rand_param(&params.q);
+        Self { params, alpha_a, alpha_b }
     }
 
     pub fn rand(&self) -> (Share,Share) {
@@ -52,11 +54,11 @@ impl TrustedDealer {
         let beta_a = rand_param(q);
         let beta_b = rand_param(q);
 
-        let t_a = tag(&self.alpha, &beta_b, &r_a,&self.params.q);
-        let t_b = tag(&self.alpha, &beta_a, &r_b,&self.params.q);
+        let t_a = tag(&self.alpha_b, &beta_b, &r_a,q);
+        let t_b = tag(&self.alpha_a, &beta_a, &r_b,q);
 
-        let key_a = Key::new(self.alpha.clone(), beta_a.clone());
-        let key_b = Key::new(self.alpha.clone(), beta_b.clone());
+        let key_a = Key::new(self.alpha_a.clone(), beta_a.clone());
+        let key_b = Key::new(self.alpha_b.clone(), beta_b.clone());
         let share_a = Share::new(key_a, t_a, r_a);
         let share_b = Share::new(key_b, t_b, r_b);
 
@@ -70,6 +72,6 @@ fn rand_param(param: &BigUint) -> BigUint {
 }
 
 fn tag(alpha: &BigUint, beta: &BigUint, x: &BigUint, q: &BigUint) -> BigUint {
-    alpha * x + beta % q
+    (alpha * x + beta) % q
 }
 
