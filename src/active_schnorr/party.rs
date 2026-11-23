@@ -3,18 +3,30 @@ use num_bigint::{BigRng010, BigUint};
 use crate::active_schnorr::trusted_dealer::{Key, Share};
 use super::protocol::{ProtocolParams, ActiveSchnorrSignature};
 
+
+pub struct Opening {
+    pub share: BigUint,
+    pub tag: BigUint
+}
+
+impl Opening {
+    pub fn new(share: BigUint, tag: BigUint) -> Self {
+        Self { share, tag }
+    }
+}
+
 pub struct Party {
     params: ProtocolParams,
-    incoming: mpsc::Receiver<Share>,
-    outgoing: mpsc::Sender<Share>,
+    incoming: mpsc::Receiver<Opening>,
+    outgoing: mpsc::Sender<Opening>,
 }
 
 #[allow(unused)]
 impl Party {
     pub fn new(
         params: ProtocolParams,
-        incoming: mpsc::Receiver<Share>,
-        outgoing: mpsc::Sender<Share>,
+        incoming: mpsc::Receiver<Opening>,
+        outgoing: mpsc::Sender<Opening>,
     ) -> Self {
         Self { params, incoming, outgoing }
     }
@@ -70,13 +82,15 @@ impl Party {
         rand::rng().random_biguint_below(&self.params.q)
     }
 
-    fn send_and_receive(&self, to_send: &Share) -> Share {
-        self.outgoing.send(to_send.clone()).unwrap();
+    fn send_and_receive(&self, to_send: &Share) -> Opening {
+        self.outgoing
+            .send(to_send.into())
+            .unwrap();
         self.incoming.recv().unwrap()
     }
     
     fn open_group(&self, share: &Share) -> BigUint {
-        let Share{key: inc_key, tag: inc_tag, share: inc_share} = self.send_and_receive(share);
+        let Opening{tag: inc_tag, share: inc_share} = self.send_and_receive(share);
         let Share { key, tag, share } = share.clone();
 
         let p = &self.params.p;
@@ -90,7 +104,7 @@ impl Party {
     }
 
     fn open_scalar(&self, share: &Share) -> BigUint {
-        let Share{key: inc_key, tag: inc_tag, share: inc_share} = self.send_and_receive(share);
+        let Opening{tag: inc_tag, share: inc_share} = self.send_and_receive(share);
         let Share { key, tag, share } = share.clone();
         let q = &self.params.q;
 

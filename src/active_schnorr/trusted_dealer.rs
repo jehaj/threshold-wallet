@@ -1,4 +1,6 @@
 use num_bigint::{BigRng010, BigUint};
+use crate::active_schnorr::party::Opening;
+
 use super::protocol::{ProtocolParams};
 
 #[derive(Clone)]
@@ -15,7 +17,7 @@ impl Key {
 
 #[derive(Clone)]
 pub struct Share {
-    pub key: Key,
+    pub(crate) key: Key,
     pub tag: BigUint,
     pub share : BigUint
 }
@@ -27,6 +29,12 @@ impl Share {
         share: BigUint
     ) -> Self {
         Self { key, tag, share }
+    }
+}
+
+impl From<&Share> for Opening {
+    fn from(s: &Share) -> Self {
+        Opening::new(s.share.clone(), s.tag.clone())
     }
 }
 
