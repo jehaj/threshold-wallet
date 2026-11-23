@@ -1,6 +1,7 @@
 use num_bigint::BigUint;
 use crate::active_schnorr::protocol::{ActiveSchnorrSignature, ProtocolParams};
 
+#[allow(unused)]
 pub fn verify(pk: BigUint, params: ProtocolParams, sig: ActiveSchnorrSignature, m: BigUint) -> bool {
     let alpha = params.g;
     let (e, z) = sig;
