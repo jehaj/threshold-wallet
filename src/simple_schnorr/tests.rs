@@ -24,7 +24,7 @@ fn sign_then_verify() {
 }
 
 #[test]
-#[should_panic]
+// #[should_panic]
 fn mismatched_messages_between_parties() {
     // q = 4294962299 divides p - 1 = 8589924598, and g = 4 has order q mod p.
     let p = ProtocolParams::new(
@@ -51,10 +51,8 @@ fn mismatched_messages_between_parties() {
     // but the other protocols we've implemented do
     // TODO: should behavior be the same?
 
-    /*
     assert_eq!(pk1, pk2);
     assert_ne!(sig1, sig2);
     assert!(!verify(pk1.clone(), p.clone(), sig1.clone(), m1));
     assert!(!verify(pk1, p, sig2, m2));
-     */
 }

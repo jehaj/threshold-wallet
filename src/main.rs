@@ -1,6 +1,7 @@
 mod simple_schnorr;
 mod schnorr;
 mod ecdsa;
+mod active_schnorr;
 
 use num_bigint::BigUint;
 use secp256k1::Message;
