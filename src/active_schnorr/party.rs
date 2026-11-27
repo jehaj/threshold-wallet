@@ -96,10 +96,8 @@ impl Party {
 
         let p = &self.params.p;
 
-        // verify 
-        let res = key.beta * (inc_share.modpow(&key.alpha,p)).clone() % p;
-
-        assert_eq!(res,inc_tag.clone(), "Tag verification failed in open_group: expected {}, got {}",inc_tag,res);
+        // verify
+        verify_group(&key, p, &inc_share, &inc_tag);
 
         (share * inc_share) % p
     }
@@ -109,9 +107,8 @@ impl Party {
         let Share { key, tag, share } = share.clone();
         let q = &self.params.q;
 
-        // verify 
-        let res = (&key.alpha * &inc_share + key.beta )% q;
-        assert_eq!(res,inc_tag, "Tag verification failed in open_scalar: expected {inc_tag}, got {res}");
+        // verify
+        verify_scalar(&key, q, &inc_share, &inc_tag);
 
         (share + inc_share) % q
     }
@@ -141,4 +138,13 @@ impl Party {
         // Ship the signature
         ((e, z), pk)
     }
+}
+
+fn verify_group(key: &Key, p: &BigUint, inc_share: &BigUint, inc_tag: &BigUint) {
+    let res = &key.beta * inc_share.modpow(&key.alpha, p) % p;
+    assert_eq!(&res, inc_tag, "Tag verification failed in open_group: expected {inc_tag}, got {res}");
+}
+fn verify_scalar(key: &Key, q: &BigUint, inc_share: &BigUint, inc_tag: &BigUint) {
+    let res = (&key.alpha * inc_share + &key.beta) % q;
+    assert_eq!(&res, inc_tag, "Tag verification failed in open_scalar: expected {inc_tag}, got {res}");
 }
