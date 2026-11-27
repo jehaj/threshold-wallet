@@ -1,6 +1,7 @@
 use std::{sync::mpsc};
 use num_bigint::{BigRng010, BigUint};
 use crate::active_schnorr::trusted_dealer::{Key, Share};
+use crate::active_schnorr::verify::verify;
 use super::protocol::{ProtocolParams, ActiveSchnorrSignature};
 
 
@@ -128,13 +129,15 @@ impl Party {
         // Step 3: open group sharing
         let r =  self.open_group(&self.convert(&box_k));
         // Step 4: Compute the hash function
-        let e = self.compute_hash(r, m);
+        let e = self.compute_hash(r, m.clone());
         // Step 5: Compute z
         let z_prime = self.eval_mul_by_constant(&e, sk_local);
         let z_local = self.eval_add(&box_k, &z_prime);
         // Step 6: Open z
         let z =  self.open_scalar(&z_local);
-        // TODO: verify the signature on the message, to not complete with malformed shares?
+
+        assert!(verify(pk.clone(), self.params.clone(), (e.clone(), z.clone()), m));
+
         // Ship the signature
         ((e, z), pk)
     }

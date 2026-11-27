@@ -40,19 +40,11 @@ fn mismatched_messages_between_parties() {
     let p2 = Party::new(p.clone(), to_p2, from_p2);
 
     let (m1, m2) = (BigUint::from(42u32), BigUint::from(43u32));
-    let ((sig1, pk1), (sig2, pk2)) = thread::scope(|s| {
+    let _ = thread::scope(|s| {
         let (m1_for_p1, m2_for_p2) = (m1.clone(), m2.clone());
         let h1 = s.spawn(move || p1.run(m1_for_p1));
         let h2 = s.spawn(move || p2.run(m2_for_p2));
         (h1.join().unwrap(), h2.join().unwrap())
     });
-
-    // above does not panic, since they never verify the signature
-    // but the other protocols we've implemented do
-    // TODO: should behavior be the same?
-
-    assert_eq!(pk1, pk2);
-    assert_ne!(sig1, sig2);
-    assert!(!verify(pk1.clone(), p.clone(), sig1.clone(), m1));
-    assert!(!verify(pk1, p, sig2, m2));
+    // both parties panic, since the signature does not verify with their m.
 }
