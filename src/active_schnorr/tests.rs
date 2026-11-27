@@ -54,11 +54,4 @@ fn mismatched_messages_between_parties() {
 
     // Panics above: the parties hash different messages, so their shares of z
     // no longer match the tags and the MAC check in open_scalar aborts.
-
-    /*
-    assert_eq!(pk1, pk2);
-    assert_ne!(sig1, sig2);
-    assert!(!verify(pk1.clone(), p.clone(), sig1.clone(), m1));
-    assert!(!verify(pk1, p, sig2, m2));
-     */
 }
