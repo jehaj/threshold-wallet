@@ -24,7 +24,7 @@ fn sign_then_verify() {
 }
 
 #[test]
-// #[should_panic]
+#[should_panic]
 fn mismatched_messages_between_parties() {
     // q = 4294962299 divides p - 1 = 8589924598, and g = 4 has order q mod p.
     let p = ProtocolParams::new(
