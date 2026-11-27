@@ -77,7 +77,7 @@ impl Party {
         // Step 6: Open z
         let z =  self.open_scalar(&z_local);
 
-        verify(pk.clone(), self.params.clone(), (e.clone(), z.clone()), m);
+        assert!(verify(pk.clone(), self.params.clone(), (e.clone(), z.clone()), m));
         // Ship the signature
         ((e, z), pk)
     }
